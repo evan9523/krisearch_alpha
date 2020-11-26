@@ -122,10 +122,11 @@ export function Search({ navigation }) {
           <ScrollView
             contentContainerStyle={{
               flexDirection: "row",
-              width: "100%",
+              width: windowWidth > 767 ? "90%" : "100%",
               flexWrap: "wrap",
               marginTop: 0,
               alignItems: "flex-start",
+              alignSelf: "center",
               justifyContent: "flex-start",
             }}
             showsVerticalScrollIndicator={false}
