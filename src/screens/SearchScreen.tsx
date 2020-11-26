@@ -125,8 +125,8 @@ export function Search({ navigation }) {
               width: "100%",
               flexWrap: "wrap",
               marginTop: 0,
-              alignItems: "center",
-              justifyContent: "space-evenly",
+              alignItems: "flex-start",
+              justifyContent: "flex-start",
             }}
             showsVerticalScrollIndicator={false}
             bounces={true}
