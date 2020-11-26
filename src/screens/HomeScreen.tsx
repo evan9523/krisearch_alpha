@@ -105,12 +105,12 @@ export function Home({ navigation }) {
         <ScrollView
           contentContainerStyle={{
             flexDirection: "row",
-            width: "100%",
+            width: windowWidth > 767 ? "90%" : "100%",
             flexWrap: "wrap",
-            height: "100%",
             marginTop: 0,
-            alignItems: "center",
-            justifyContent: "space-evenly",
+            alignItems: "flex-start",
+            alignSelf: "center",
+            justifyContent: "flex-start",
           }}
           showsVerticalScrollIndicator={false}
           bounces={true}
