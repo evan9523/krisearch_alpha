@@ -126,7 +126,6 @@ export function Search({ navigation }) {
               flexWrap: "wrap",
               marginTop: 0,
               alignItems: "flex-start",
-              backgroundColor: "yellow",
               justifyContent: "flex-start",
             }}
             showsVerticalScrollIndicator={false}
