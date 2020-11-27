@@ -97,7 +97,7 @@ export function Search({ navigation }) {
             headerTap={() => {
               setblur(!blur), setterm(""), setparent(false);
             }}
-            headHolder={placer ? term : parent ? term : "Search"}
+            headHolder={placer && parent ? term : parent ? term : "Search"}
           />
           {placer ? (
             !parent ? (
@@ -117,7 +117,7 @@ export function Search({ navigation }) {
                     color: "#6F6F6F",
                   }}
                 >
-                  {filteredFarmers.length} results found for "{term}"
+                  {term}
                 </Text>
                 <TouchableOpacity
                   style={{ top: 30 }}
@@ -138,7 +138,7 @@ export function Search({ navigation }) {
                     color: "#6F6F6F",
                   }}
                 >
-                  {filteredParents.length} results found in "{term}s"
+                  {term}
                 </Text>
               </View>
             )
@@ -152,7 +152,7 @@ export function Search({ navigation }) {
                   color: "#6F6F6F",
                 }}
               >
-                {filteredParents.length} results found in "{term}s"
+                {term}
               </Text>
             </View>
           ) : (
@@ -202,9 +202,8 @@ export function Search({ navigation }) {
                   flexWrap: "wrap",
                   marginTop: 0,
                   alignItems: "flex-start",
-                  alignSelf: "center",
                   justifyContent: "flex-start",
-                  height: windowHeight < 768 ? windowHeight * 0.99 : null,
+                  alignSelf: "center",
                 }}
               >
                 {filteredParents.map((item, cIndex) => {
@@ -229,9 +228,8 @@ export function Search({ navigation }) {
                   flexWrap: "wrap",
                   marginTop: 0,
                   alignItems: "flex-start",
-                  alignSelf: "center",
                   justifyContent: "flex-start",
-                  height: windowHeight < 768 ? windowHeight * 0.99 : null,
+                  alignSelf: "center",
                 }}
               >
                 {filteredFarmers.map((item, cIndex) => {
