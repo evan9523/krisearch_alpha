@@ -154,5 +154,31 @@
         "quantity":14,
         "image":"https://images.fineartamerica.com/images-medium-large-5/green-rice-paddy-sungjin-kim.jpg",
         "gender":"male"
+    },
+    {
+        "id":13,
+        "name":"Prakash Javedkar",
+        "phone":12345,
+        "address":"Jharkhand",
+        "avatar":"https://images.indianexpress.com/2016/07/punjab-farmer-759.jpg",
+        "crop":"Rice",
+        "harvestDate": "2020-12-28",
+        "area":5,
+        "quantity":14,
+        "image":"https://images.fineartamerica.com/images-medium-large-5/green-rice-paddy-sungjin-kim.jpg",
+        "gender":"male"
+    },
+    {
+        "id":14,
+        "name":"Prakash Javedkar",
+        "phone":12345,
+        "address":"Jharkhand",
+        "avatar":"https://images.indianexpress.com/2016/07/punjab-farmer-759.jpg",
+        "crop":"Rice",
+        "harvestDate": "2020-12-28",
+        "area":5,
+        "quantity":14,
+        "image":"https://images.fineartamerica.com/images-medium-large-5/green-rice-paddy-sungjin-kim.jpg",
+        "gender":"male"
     }
 ]

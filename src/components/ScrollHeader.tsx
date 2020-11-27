@@ -40,10 +40,7 @@ function ScrollHeader(props: ScrollHeaderProps) {
           style={{ width: 100, height: 50 }}
         />
       </View>
-      <Text style={{ padding: 5, fontWeight: "400", marginTop: -10 }}>
-        Discover the ones who grow our food. Connect with them personally.
-      </Text>
-      <View style={{ marginTop: 5, width: "100%" }}>
+      <View style={{ marginTop: 0, width: "100%" }}>
         <SearchBar onHit={headerTap} holderValue={headHolder} />
       </View>
     </View>

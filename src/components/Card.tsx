@@ -20,10 +20,20 @@ export interface CardProps {
   address?: string;
   onPress: any;
   cropAvatar?: string;
+  isCrop?: boolean;
 }
 
 export default function Card(props: CardProps) {
-  const { name, avatar, crop, phone, address, onPress, cropAvatar } = props;
+  const {
+    name,
+    avatar,
+    crop,
+    phone,
+    address,
+    onPress,
+    cropAvatar,
+    isCrop,
+  } = props;
 
   const windowWidth = Dimensions.get("window").width;
   const cardWidth = windowWidth / 2 - 30;
@@ -62,7 +72,7 @@ export default function Card(props: CardProps) {
                 borderRadius: 10,
                 alignItems: "center",
                 margin: 5,
-                marginBottom: 5,
+
                 shadowColor: "#98A0FF",
                 shadowOffset: {
                   width: 0,
@@ -77,52 +87,68 @@ export default function Card(props: CardProps) {
       >
         <Image
           source={{ uri: avatar }}
-          style={{
-            width: 100,
-            height: 100,
-            borderWidth: 1,
-            borderColor: "#fff",
-            borderRadius: 100,
-          }}
+          style={
+            !isCrop
+              ? {
+                  width: 100,
+                  height: 100,
+                  borderWidth: 1,
+                  borderColor: "#fff",
+                  borderRadius: 100,
+                }
+              : {
+                  width: 140,
+                  height: 140,
+                  borderWidth: 1,
+                  borderColor: "#fff",
+                  borderRadius: 100,
+                }
+          }
         />
         <Text style={{ fontWeight: "500", marginTop: 10 }}>
           {getSmallString(name)}
         </Text>
-        <View
-          style={{
-            flexDirection: "row",
-            justifyContent: "space-evenly",
-            alignItems: "center",
-            marginTop: 10,
-          }}
-        >
+
+        {!isCrop ? (
           <View
             style={{
               flexDirection: "row",
+              justifyContent: "space-evenly",
               alignItems: "center",
-              justifyContent: "center",
+              marginTop: 10,
             }}
           >
-            <Image
-              source={{ uri: cropAvatar }}
+            <View
               style={{
-                height: 15,
-                width: 15,
-                borderColor: "green",
-                borderWidth: 1,
-                borderRadius: 15,
+                flexDirection: "row",
+                alignItems: "center",
+                justifyContent: "center",
               }}
-            />
-            <Text> {crop}</Text>
+            >
+              <Image
+                source={{ uri: cropAvatar }}
+                style={{
+                  height: 15,
+                  width: 15,
+                  borderColor: "green",
+                  borderWidth: 1,
+                  borderRadius: 15,
+                }}
+              />
+              <Text> {crop}</Text>
+            </View>
+            <Entypo name="dot-single" size={15} style={{ top: 10 }} />
+            <View>
+              <Text>{address}</Text>
+            </View>
           </View>
-          <Entypo name="dot-single" size={15} style={{ top: 10 }} />
+        ) : null}
+
+        {!isCrop ? (
           <View>
-            <Text>{address}</Text>
+            <Text>{phone}</Text>
           </View>
-        </View>
-        <View>
-          <Text>{phone}</Text>
-        </View>
+        ) : null}
       </View>
     </TouchableOpacity>
   );

@@ -32,6 +32,7 @@ const Tab = createBottomTabNavigator();
 const Stack = createStackNavigator();
 
 const windowWidth = Dimensions.get("window").width;
+const windowHeight = Dimensions.get("window").height;
 
 function MyTabBar({ state, descriptors, navigation }) {
   const focusedOptions = descriptors[state.routes[state.index].key].options;

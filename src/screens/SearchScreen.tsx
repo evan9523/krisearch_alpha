@@ -18,7 +18,6 @@ import {
   ScrollView,
   Dimensions,
   Platform,
-  KeyboardAvoidingViewComponent,
   KeyboardAvoidingView,
 } from "react-native";
 import { FloatingAction } from "react-native-floating-action";
@@ -31,6 +30,7 @@ import Data from "../data/items.json";
 import { Modalize } from "react-native-modalize";
 import { hideNumber } from "../utils/hideNumber";
 import { getSmallString } from "../utils/getSmallString";
+import { floor } from "react-native-reanimated";
 
 const windowHeight = Dimensions.get("window").height;
 const modalHeight = Dimensions.get("window").height;
@@ -46,6 +46,9 @@ export function Search({ navigation }) {
   const [openFilter, setopenFilter] = useState(false);
   const [toggleCheckBox, setToggleCheckBox] = useState(false);
   const [gender, setgender] = useState("");
+  const [hideFAB, sethideFAB] = useState(false);
+  const [parent, setparent] = useState(false);
+  const [genderSelected, setgenderSelected] = useState(false);
 
   const setSearch = (text: string) => {
     let dynamic = text.toLowerCase();
@@ -54,6 +57,10 @@ export function Search({ navigation }) {
 
   const filteredCrops = Data.filter((item) => {
     return item.name.toLocaleLowerCase().includes(term.toLowerCase());
+  });
+
+  const filteredParents = Data.filter((item) => {
+    return item.type.toLocaleLowerCase().includes(term.toLowerCase());
   });
 
   const filteredFarmers = Farmers.filter((item) => {
@@ -74,6 +81,10 @@ export function Search({ navigation }) {
     modalizeRef.current?.open();
   };
 
+  const onCloseFilter = () => {
+    modalizeRef.current?.close();
+  };
+
   const onClose = () => {
     modalizeRef.current?.close();
   };
@@ -83,31 +94,93 @@ export function Search({ navigation }) {
       <View style={{ height: windowHeight, backgroundColor: "#EAEAFF" }}>
         <View style={{ padding: 6, height: "100%" }}>
           <ScrollHeader
-            headerTap={() => setblur(!blur)}
-            headHolder={placer ? term : "Search"}
+            headerTap={() => {
+              setblur(!blur), setterm(""), setparent(false);
+            }}
+            headHolder={placer ? term : parent ? term : "Search"}
           />
           {placer ? (
-            <Text
-              style={{
-                marginTop: 60,
-                padding: 5,
-                fontWeight: "500",
-                color: "#6F6F6F",
-              }}
-            >
-              {filteredFarmers.length} results found for "{term}"
-            </Text>
+            !parent ? (
+              <View
+                style={{
+                  width: "100%",
+                  flexDirection: "row",
+                  alignItems: "center",
+                  justifyContent: "space-between",
+                }}
+              >
+                <Text
+                  style={{
+                    marginTop: 60,
+                    padding: 5,
+                    fontWeight: "500",
+                    color: "#6F6F6F",
+                  }}
+                >
+                  {filteredFarmers.length} results found for "{term}"
+                </Text>
+                <TouchableOpacity
+                  style={{ top: 30 }}
+                  onPress={() => {
+                    console.log("Biharma"), onOpenfilter();
+                  }}
+                >
+                  Filter
+                </TouchableOpacity>
+              </View>
+            ) : (
+              <View>
+                <Text
+                  style={{
+                    marginTop: 60,
+                    padding: 5,
+                    fontWeight: "500",
+                    color: "#6F6F6F",
+                  }}
+                >
+                  {filteredParents.length} results found in "{term}s"
+                </Text>
+              </View>
+            )
+          ) : parent ? (
+            <View>
+              <Text
+                style={{
+                  marginTop: 60,
+                  padding: 5,
+                  fontWeight: "500",
+                  color: "#6F6F6F",
+                }}
+              >
+                {filteredParents.length} results found in "{term}s"
+              </Text>
+            </View>
           ) : (
-            <Text
+            <View
               style={{
-                marginTop: 60,
-                padding: 5,
-                fontWeight: "500",
-                color: "#6F6F6F",
+                width: "100%",
+                flexDirection: "row",
+                alignItems: "center",
+                justifyContent: "space-between",
               }}
             >
-              Search
-            </Text>
+              <Text
+                style={{
+                  marginTop: 60,
+                  padding: 5,
+                  fontWeight: "500",
+                  color: "#6F6F6F",
+                }}
+              >
+                {term}
+              </Text>
+              <TouchableOpacity
+                style={{ top: 30 }}
+                onPress={() => console.log("Biharma")}
+              >
+                Filter
+              </TouchableOpacity>
+            </View>
           )}
           {/* {placer ? (
             <TouchableOpacity
@@ -119,35 +192,66 @@ export function Search({ navigation }) {
               Filter
             </TouchableOpacity>
           ) : null} */}
-          <ScrollView
-            contentContainerStyle={{
-              flexDirection: "row",
-              width: windowWidth > 767 ? "90%" : "100%",
-              flexWrap: "wrap",
-              marginTop: 0,
-              alignItems: "flex-start",
-              alignSelf: "center",
-              justifyContent: "flex-start",
-            }}
-            showsVerticalScrollIndicator={false}
-            bounces={true}
-          >
-            {filteredFarmers.map((item, cIndex) => {
-              return (
-                <Card
-                  key={item.id}
-                  name={item.name}
-                  avatar={item.avatar}
-                  phone={item.phone}
-                  address={item.address}
-                  crop={item.crop}
-                  onPress={() => {
-                    setfarmer(item.id), onOpen();
-                  }}
-                  cropAvatar={item.image}
-                />
-              );
-            })}
+
+          <ScrollView showsVerticalScrollIndicator={false} bounces={true}>
+            {parent ? (
+              <View
+                style={{
+                  flexDirection: "row",
+                  width: windowWidth > 767 ? "90%" : "100%",
+                  flexWrap: "wrap",
+                  marginTop: 0,
+                  alignItems: "flex-start",
+                  alignSelf: "center",
+                  justifyContent: "flex-start",
+                  height: windowHeight < 768 ? windowHeight * 0.99 : null,
+                }}
+              >
+                {filteredParents.map((item, cIndex) => {
+                  return (
+                    <Card
+                      key={item.id}
+                      name={item.name}
+                      avatar={item.image}
+                      isCrop={true}
+                      onPress={() => {
+                        setparent(!parent), setterm(item.name);
+                      }}
+                    />
+                  );
+                })}
+              </View>
+            ) : (
+              <View
+                style={{
+                  flexDirection: "row",
+                  width: windowWidth > 767 ? "90%" : "100%",
+                  flexWrap: "wrap",
+                  marginTop: 0,
+                  alignItems: "flex-start",
+                  alignSelf: "center",
+                  justifyContent: "flex-start",
+                  height: windowHeight < 768 ? windowHeight * 0.99 : null,
+                }}
+              >
+                {filteredFarmers.map((item, cIndex) => {
+                  return (
+                    <Card
+                      key={item.id}
+                      name={item.name}
+                      avatar={item.avatar}
+                      phone={item.phone}
+                      address={item.address}
+                      crop={item.crop}
+                      onPress={() => {
+                        setfarmer(item.id), onOpen(), sethideFAB(true);
+                      }}
+                      cropAvatar={item.image}
+                    />
+                  );
+                })}
+              </View>
+            )}
           </ScrollView>
           <Modalize
             ref={modalizeRef}
@@ -189,21 +293,48 @@ export function Search({ navigation }) {
                         <Image source={item.avatar} style={{height:50, width:50}}/>
                    <Text>{farmer}</Text> */}
                       <TouchableOpacity
-                        onPress={() => onClose()}
+                        onPress={() => {
+                          onClose(), sethideFAB(false);
+                        }}
                         style={{
                           alignItems: "center",
-                          marginTop: 10,
+                          marginTop: 5,
                           marginRight: 2,
                           padding: 5,
                           justifyContent: "center",
                           alignSelf: "flex-end",
-                          backgroundColor: "#9F99FF",
-                          borderRadius: "100%",
+                          backgroundColor: "rgba(0,0,0,0.2)",
+                          borderRadius: 10,
                           height: 35,
-                          width: 35,
+                          width: 70,
                         }}
                       >
-                        <SimpleLineIcons name="close" size={25} color="#fff" />
+                        <View
+                          style={{
+                            flexDirection: "row",
+                            justifyContent: "space-between",
+                            alignItems: "center",
+                          }}
+                        >
+                          <Text
+                            style={{
+                              fontSize: 15,
+                              fontWeight: 500,
+                              color: "#fff",
+                              marginRight: 5,
+                            }}
+                          >
+                            Close
+                          </Text>
+                          <SimpleLineIcons
+                            name="close"
+                            size={15}
+                            color="#fff"
+                            onPress={() => {
+                              onClose(), sethideFAB(false);
+                            }}
+                          />
+                        </View>
                       </TouchableOpacity>
                       <View
                         style={{
@@ -619,13 +750,157 @@ export function Search({ navigation }) {
               }
             })}
           </Modalize>
+
+          <Modalize
+            ref={modalizeRef}
+            modalHeight={newHeight}
+            modalStyle={
+              windowWidth > 767 ? { width: 500, alignSelf: "center" } : null
+            }
+            threshold={100}
+            closeOnOverlayTap={true}
+            mod
+          >
+            <View
+              style={{
+                width: "100%",
+                flexDirection: "row",
+                alignItems: "center",
+                justifyContent: "space-between",
+                padding: 5,
+              }}
+            >
+              <Text
+                style={{
+                  padding: 5,
+                  fontWeight: "500",
+                  color: "#6F6F6F",
+                  fontSize: 20,
+                  marginLeft: 5,
+                }}
+              >
+                Filter resuts here
+              </Text>
+              <TouchableOpacity onPress={() => onCloseFilter()}>
+                Close Filter
+              </TouchableOpacity>
+            </View>
+            <View
+              style={{
+                width: "95%",
+                alignSelf: "flex-start",
+                height: 1,
+                backgroundColor: "#C0C0C0",
+                marginTop: 10,
+                alignItems: "flex-start",
+              }}
+            ></View>
+            <Text>By gender</Text>
+            <View
+              style={{
+                width: "100%",
+                flexDirection: "row",
+                alignItems: "center",
+                justifyContent: "flex-start",
+                padding: 5,
+              }}
+            >
+              <TouchableOpacity
+                onPress={() => {
+                  setgenderSelected(!genderSelected),
+                    gender == "" ? setgender("male") : "",
+                    console.log("Selected Value is:" + gender);
+                }}
+              >
+                <View
+                  style={{
+                    flexDirection: "row",
+                    alignItems: "flex-start",
+                    justifyContent: "flex-start",
+                    marginLeft: 5,
+                  }}
+                >
+                  <FontAwesome
+                    name="dot-circle-o"
+                    size={20}
+                    color="black"
+                    style={{ top: 2 }}
+                  />
+                  <Text style={{ fontSize: 20, marginLeft: 3 }}>Male</Text>
+                </View>
+              </TouchableOpacity>
+              <TouchableOpacity
+                onPress={() => {
+                  setgender("");
+                  setgenderSelected(!genderSelected),
+                    setgender("female"),
+                    console.log("Selected Value is:" + gender);
+                }}
+              >
+                <View
+                  style={{
+                    flexDirection: "row",
+                    alignItems: "center",
+                    justifyContent: "flex-start",
+                    marginLeft: 5,
+                  }}
+                >
+                  <FontAwesome name="dot-circle-o" size={20} color="black" />
+                  <Text style={{ fontSize: 20, marginLeft: 3 }}>Female</Text>
+                </View>
+              </TouchableOpacity>
+            </View>
+          </Modalize>
         </View>
       </View>
+      {!blur ? (
+        <View
+          style={{
+            width: windowWidth,
+            height: 30,
+            backgroundColor: "#fff",
+            flexDirection: "row",
+            bottom: 0,
+            position: "absolute",
+            shadowColor: "#98A0FF",
+            shadowOffset: {
+              width: 0,
+              height: -2,
+            },
+            shadowOpacity: 0.2,
+            shadowRadius: 5.46,
+
+            elevation: 9,
+          }}
+        >
+          <TouchableOpacity
+            style={{
+              width: "50%",
+              alignItems: "center",
+              justifyContent: "center",
+            }}
+            onPress={() => navigation.navigate("Home")}
+          >
+            <Feather name="home" size={25} color="gray" />
+          </TouchableOpacity>
+          <TouchableOpacity
+            style={{
+              width: "50%",
+              alignItems: "center",
+              justifyContent: "center",
+            }}
+            onPress={() => navigation.navigate("Profile")}
+          >
+            <Feather name="user" size={25} color="gray" />
+          </TouchableOpacity>
+        </View>
+      ) : null}
 
       <KeyboardAvoidingView>
         <FloatingAction
           position="center"
           overlayColor="transparent"
+          visible={!hideFAB}
           color="#3A48ED"
           floatingIcon={React.cloneElement(
             <SimpleLineIcons name="magnifier" color="#fff" size={30} />
@@ -684,6 +959,7 @@ export function Search({ navigation }) {
                     }
                   }
                   placeholder="Search for Crops"
+                  value={term}
                   autoFocus={blur}
                   editable={blur}
                   onChangeText={(text) => {
@@ -696,29 +972,30 @@ export function Search({ navigation }) {
                     justifyContent: "space-between",
                   }}
                 >
-                  <TouchableOpacity>
-                    <View
-                      style={{
-                        width: 25,
-                        height: 25,
-                        borderWidth: 2,
-                        borderColor: "#A1C7FF",
-                        alignItems: "center",
-                        alignSelf: "flex-end",
-                        justifyContent: "center",
-                        right: -10,
-                        backgroundColor: "#A1C7FF",
-                        borderRadius: 25,
+                  {term ? (
+                    <TouchableOpacity
+                      onPress={() => {
+                        setterm("");
                       }}
                     >
-                      <AntDesign
-                        name="close"
-                        size={20}
-                        color="#3A48ED"
-                        onPress={() => setblur(!blur)}
-                      />
-                    </View>
-                  </TouchableOpacity>
+                      <View
+                        style={{
+                          width: 25,
+                          height: 25,
+                          borderWidth: 2,
+                          borderColor: "#A1C7FF",
+                          alignItems: "center",
+                          alignSelf: "flex-end",
+                          justifyContent: "center",
+                          right: -10,
+                          backgroundColor: "#A1C7FF",
+                          borderRadius: 25,
+                        }}
+                      >
+                        <AntDesign name="close" size={20} color="#3A48ED" />
+                      </View>
+                    </TouchableOpacity>
+                  ) : null}
                 </View>
               </View>
               <View style={{ flex: 1, alignItems: "center", width: "100%" }}>
@@ -735,52 +1012,116 @@ export function Search({ navigation }) {
                       margin: 5,
                     }}
                   >
-                    {filteredCrops.map((item, cIndex) => {
-                      return (
-                        <TouchableOpacity
-                          onPress={() => {
-                            setplacer(true), setblur(!blur), setterm(item.name);
+                    <View
+                      style={{
+                        width: "100%",
+                        alignItems: "flex-start",
+                        padding: 5,
+                        marginBottom: 10,
+                        marginTop: 5,
+                      }}
+                    >
+                      {filteredCrops.length > 0 ? (
+                        <Text
+                          style={{
+                            marginLeft: 20,
+                            fontSize: 15,
+                            fontWeight: "600",
                           }}
                         >
-                          <View
-                            style={{
-                              width: Dimensions.get("window").width - 50,
-                              height: 45,
-                              padding: 5,
-                              borderRadius: 8,
-                              flexDirection: "row",
-                              alignItems: "center",
-                              justifyContent: "flex-start",
-                              backgroundColor: "#fff",
-                              margin: 2,
+                          Available Crops
+                        </Text>
+                      ) : (
+                        <Text
+                          style={{
+                            marginLeft: 20,
+                            fontSize: 15,
+                            fontWeight: "600",
+                            alignSelf: "center",
+                          }}
+                        >
+                          🤔 ....That seems to be missing...
+                        </Text>
+                      )}
+                    </View>
+
+                    {filteredCrops.map((item, cIndex) => {
+                      return (
+                        <View
+                          style={{
+                            width:
+                              windowWidth > 768
+                                ? Dimensions.get("window").width - 80
+                                : Dimensions.get("window").width - 50,
+                            height: 45,
+                            padding: 5,
+                            borderRadius: 8,
+                            flexDirection: "row",
+                            alignItems: "center",
+                            justifyContent: "space-between",
+                            backgroundColor: "#fff",
+                            margin: 2,
+                          }}
+                        >
+                          <TouchableOpacity
+                            onPress={() => {
+                              setplacer(true),
+                                setblur(!blur),
+                                setterm(item.name);
                             }}
                           >
-                            <Image
-                              source={{ uri: item.image }}
+                            <View
                               style={{
-                                height: 35,
-                                width: 35,
-                                borderColor: "green",
-                                borderWidth: 1,
-                                borderRadius: 35,
-                              }}
-                            />
-                            <Text style={{ fontSize: 20 }}> {item.name}</Text>
-                            <Text
-                              style={{
-                                fontSize: 15,
-                                alignSelf: "center",
-                                color: "#989898",
+                                flexDirection: "row",
+                                alignItems: "center",
                               }}
                             >
-                              {" "}
-                              in{" "}
+                              <Image
+                                source={{ uri: item.image }}
+                                style={{
+                                  height: 35,
+                                  width: 35,
+                                  borderColor: "green",
+                                  borderWidth: 1,
+                                  borderRadius: 35,
+                                }}
+                              />
+                              <Text style={{ fontSize: 20 }}> {item.name}</Text>
+                              <Text
+                                style={{
+                                  fontSize: 15,
+                                  alignSelf: "center",
+                                  color: "#989898",
+                                }}
+                              >
+                                {" "}
+                                in{" "}
+                              </Text>
+                              <Text style={{ fontSize: 15 }}>{item.type}</Text>
+                            </View>
+                          </TouchableOpacity>
+                          <TouchableOpacity
+                            style={{
+                              backgroundColor: "#3ECF8E",
+                              height: "100%",
+                              alignItems: "center",
+                              justifyContent: "center",
+                              padding: 5,
+                              borderRadius: 5,
+                              alignSelf: "flex-end",
+                            }}
+                            onPress={() => {
+                              setparent(!parent),
+                                setterm(item.type),
+                                setplacer(!placer),
+                                setblur(!blur);
+                            }} //true
+                          >
+                            <Text style={{ fontSize: 15, color: "#fff" }}>
+                              View {item.type}s
                             </Text>
-                            <Text style={{ fontSize: 15, color: "#3A48ED" }}>
-                              {item.type}
-                            </Text>
-                          </View>
-                        </TouchableOpacity>
+                          </TouchableOpacity>
+                        </View>
                       );
                     })}
                   </View>
@@ -788,16 +1129,7 @@ export function Search({ navigation }) {
               </View>
             </View>
 
-            <View
-              style={{
-                width: "100%",
-                backgroundColor: "transparent",
-                height: 50,
-                alignItems: "center",
-                top: Dimensions.get("window").height - 65,
-                position: "absolute",
-              }}
-            >
+            <KeyboardAvoidingView>
               <FloatingAction
                 position="center"
                 overlayColor="transparent"
@@ -807,7 +1139,7 @@ export function Search({ navigation }) {
                 )}
                 onPressMain={() => navigation.navigate("Home")}
               />
-            </View>
+            </KeyboardAvoidingView>
           </BlurView>
         </View>
       ) : null}

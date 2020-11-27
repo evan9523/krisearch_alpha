@@ -37,6 +37,7 @@ import { FloatingAction } from "react-native-floating-action";
 export function Home({ navigation }) {
   const [showdata, setshowdata] = useState(false);
   const [showHeader, setshowHeader] = useState(false);
+  const [hideFAB, sethideFAB] = useState(false);
   const [search, setsearch] = useState({
     isLoading: true,
     crops: [],
@@ -125,7 +126,10 @@ export function Home({ navigation }) {
                 address={item.address}
                 crop={item.crop}
                 onPress={() => {
-                  setfarmer(item.id), onOpen(), passData(item.id);
+                  setfarmer(item.id),
+                    onOpen(),
+                    passData(item.id),
+                    sethideFAB(true);
                 }}
                 cropAvatar={item.image}
               />
@@ -173,21 +177,48 @@ export function Home({ navigation }) {
                         <Image source={item.avatar} style={{height:50, width:50}}/>
                    <Text>{farmer}</Text> */}
                     <TouchableOpacity
-                      onPress={() => onClose()}
+                      onPress={() => {
+                        onClose(), sethideFAB(false);
+                      }}
                       style={{
                         alignItems: "center",
-                        marginTop: 10,
+                        marginTop: 5,
                         marginRight: 2,
                         padding: 5,
                         justifyContent: "center",
                         alignSelf: "flex-end",
-                        backgroundColor: "#9F99FF",
-                        borderRadius: "100%",
+                        backgroundColor: "rgba(0,0,0,0.2)",
+                        borderRadius: 10,
                         height: 35,
-                        width: 35,
+                        width: 70,
                       }}
                     >
-                      <SimpleLineIcons name="close" size={25} color="#fff" />
+                      <View
+                        style={{
+                          flexDirection: "row",
+                          justifyContent: "space-between",
+                          alignItems: "center",
+                        }}
+                      >
+                        <Text
+                          style={{
+                            fontSize: 15,
+                            fontWeight: 500,
+                            color: "#fff",
+                            marginRight: 5,
+                          }}
+                        >
+                          Close
+                        </Text>
+                        <SimpleLineIcons
+                          name="close"
+                          size={15}
+                          color="#fff"
+                          onPress={() => {
+                            onClose(), sethideFAB(false);
+                          }}
+                        />
+                      </View>
                     </TouchableOpacity>
                     <View
                       style={{
@@ -644,6 +675,7 @@ export function Home({ navigation }) {
       >
         <FloatingAction
           position="center"
+          visible={!hideFAB}
           overlayColor="transparent"
           color="#3A48ED"
           floatingIcon={React.cloneElement(
