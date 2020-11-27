@@ -40,7 +40,8 @@ function ScrollHeader(props: ScrollHeaderProps) {
           style={{ width: 100, height: 50 }}
         />
       </View>
-      <View style={{ marginTop: 0, width: "100%" }}>
+
+      <View style={{ marginTop: 5, width: "100%" }}>
         <SearchBar onHit={headerTap} holderValue={headHolder} />
       </View>
     </View>
